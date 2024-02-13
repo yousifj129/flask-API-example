@@ -1,3 +1,5 @@
+import csv
+
 def levenshtein_similarity(s1, s2):
     # Calculate the Levenshtein distance
     distance = levenshtein_distance(s1, s2)
@@ -34,12 +36,27 @@ def levenshtein_distance(s1, s2):
     # Return the value in the bottom-right cell of the matrix (Levenshtein distance)
     return matrix[len(s1)][len(s2)]
 
-class chatbot():
-    qna = [str,str]
-
+class Chatbot():
+    qna = []
+    def loadData(self, csv_file):
+        self.qna = []
+        with open(csv_file, 'r', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if len(row) == 2:
+                    question, answer = row
+                    self.qna.append((question, answer))
     def __init__(self):
         pass
 
     def chat(self, text):
-        return text
-    
+        best_similarity = 0
+        best_answer = None
+
+        for question, answer in self.qna:
+            similarity = levenshtein_similarity(text, question)
+            if similarity > best_similarity:
+                best_similarity = similarity
+                best_answer = answer
+
+        return best_answer
